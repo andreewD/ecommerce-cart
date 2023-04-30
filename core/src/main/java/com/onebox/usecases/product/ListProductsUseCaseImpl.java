@@ -17,6 +17,7 @@ public class ListProductsUseCaseImpl implements ListProductsUseCase {
     public ListProductsUseCaseResult execute() {
         ListProductsUseCaseResult result = new ListProductsUseCaseResult();
         List<Product> products = productRepository.findAll();
+
         result.setProducts(products);
         result.setStatusCode(StatusCode.SUCCESS);
         result.wasSuccessful();
