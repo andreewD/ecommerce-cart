@@ -21,6 +21,9 @@ Author: [Andree Anchi](https://www.linkedin.com/in/andree-anchi-dueñas/)
     - Password: `sa`
 - The Swagger documentation will be available at `http://localhost:8080/v1/swagger-ui.html`
 
+## How to test
+- Run `mvn test` to run the tests
+
 ## How to use
 
 ### Products
