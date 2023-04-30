@@ -1,5 +1,7 @@
-package com.onebox.usecases.product;
+package com.onebox.usecases.cart;
 
+import com.onebox.entities.Cart;
+import com.onebox.utils.UseCaseResult;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,6 +13,6 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(callSuper = false)
 @AllArgsConstructor
 @NoArgsConstructor
-public class AddProductToCartUseCaseResult {
-    private Boolean success;
+public class AddProductToCartUseCaseResult extends UseCaseResult {
+    private Cart cart;
 }

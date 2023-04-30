@@ -1,6 +1,10 @@
 package com.onebox.entities;
 
+import com.vladmihalcea.hibernate.type.json.JsonNodeBinaryType;
+import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Embeddable;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -8,19 +12,16 @@ import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Type;
 
 import java.util.List;
 import java.util.UUID;
 
-@Builder
 @Data
-@EqualsAndHashCode(callSuper = false)
-@AllArgsConstructor
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
 @Entity
 public class Cart {
     @Id
@@ -29,12 +30,13 @@ public class Cart {
     @Column(name = "id", updatable = false, nullable = false, columnDefinition = "VARCHAR(36)")
     private UUID id;
 
-    @Column
-    List<Integer> products;
+    @Column(columnDefinition = "jsonb")
+    private String products;
 
     @Column
     private Double total;
 
     @Column
     private Long validUntil;
+
 }

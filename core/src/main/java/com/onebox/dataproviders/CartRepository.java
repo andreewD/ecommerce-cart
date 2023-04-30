@@ -10,4 +10,6 @@ public interface CartRepository {
     UUID addCart();
     Cart findById(UUID id);
     void deleteCart(UUID id);
+    void addProductToCart(UUID cartId, Integer productId, Integer quantity,Double price);
+
 }

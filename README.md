@@ -27,7 +27,10 @@ Author: [Andree Anchi](https://www.linkedin.com/in/andree-anchi-dueñas/)
 - `GET /product` - Get all products
 
 ### Carts
-- `GET /carts` - Get all carts
-- `GET /carts/{id}` - Get cart by id
-- `POST /carts` - Create a new cart
-- `DELETE /carts/{id}` - Delete cart by id
+- `GET /cart` - Get all carts
+- `GET /cart/{id}` - Get cart by id
+- `POST /cart` - Create a new cart
+- `DELETE /cart/{id}` - Delete cart by id
+- `POST /cart/{id}/products` - Add product to cart
+- `DELETE /cart/{id}/products/{productId}` - Remove product from cart [TODO]
+- `PUT /cart/{id}/products/{productId}` - Update product quantity in cart [TODO]

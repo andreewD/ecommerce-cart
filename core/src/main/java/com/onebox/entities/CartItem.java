@@ -1,4 +1,4 @@
-package com.onebox.usecases.product;
+package com.onebox.entities;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,7 +11,8 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(callSuper = false)
 @AllArgsConstructor
 @NoArgsConstructor
-public class AddProductToCartUseCaseParams {
-    private Long productId;
-    private Long cartId;
+public class CartItem {
+        private Integer productId;
+        private Integer quantity;
+        private Double price;
 }

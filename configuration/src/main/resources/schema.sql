@@ -16,7 +16,8 @@ CREATE TABLE PRODUCT (
 
 CREATE TABLE CART (
   id UUID PRIMARY KEY,
-  products INTEGER ARRAY,
+  products VARCHAR(250),
   total DECIMAL(10,2),
   valid_until INTEGER
 );
+
