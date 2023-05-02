@@ -2,8 +2,6 @@ package com.onebox.usecases.cart;
 
 import com.onebox.dataproviders.CartRepository;
 import com.onebox.utils.StatusCode;
-import org.springframework.beans.factory.annotation.Autowired;
-
 public class AddCartUseCaseImpl implements AddCartUseCase{
     private final CartRepository cartRepository;
 

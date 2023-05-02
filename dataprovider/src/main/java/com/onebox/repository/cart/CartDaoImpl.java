@@ -3,14 +3,15 @@ package com.onebox.repository.cart;
 import com.onebox.dataproviders.CartRepository;
 import com.onebox.entities.Cart;
 import com.onebox.entities.CartItem;
-import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContextType;
-import jakarta.transaction.Transactional;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceContextType;
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;

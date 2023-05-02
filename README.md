@@ -1,7 +1,7 @@
 # Ecommerce cart application
 Author: [Andree Anchi](https://www.linkedin.com/in/andree-anchi-dueñas/)
 ## Dependencies
-- Java 17
+- Java 11
 - Maven 3.8.2
 - H2 Database
 - Spring Boot 2.5.5
