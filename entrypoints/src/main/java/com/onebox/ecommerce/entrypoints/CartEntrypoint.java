@@ -2,6 +2,7 @@ package com.onebox.ecommerce.entrypoints;
 
 import com.onebox.ecommerce.entrypoints.converter.DomainToDTOConverter;
 import com.onebox.ecommerce.entrypoints.request.AddProductToCartDTO;
+import com.onebox.ecommerce.entrypoints.response.CartRS;
 import com.onebox.ecommerce.entrypoints.response.ListCartsRS;
 import com.onebox.usecases.cart.AddCartUseCaseImpl;
 import com.onebox.usecases.cart.AddCartUseCaseResult;
@@ -36,7 +37,9 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 import java.util.UUID;
 
+import static com.onebox.ecommerce.entrypoints.CartApi.ADD_PRODUCT;
 import static com.onebox.ecommerce.entrypoints.CartApi.BASE;
+import static com.onebox.ecommerce.entrypoints.CartApi.BY_ID;
 
 @RestController
 @AllArgsConstructor
@@ -54,7 +57,7 @@ public class CartEntrypoint {
             @ApiResponse(responseCode = "200",content = @Content(
                     schema = @Schema(implementation = ListCartsRS.class)))
     })
-    @GetMapping("/")
+    @GetMapping
     public ResponseEntity<?> listCarts() {
         ListCartsUseCaseResult result = listCartsUseCase.execute();
         return result.wasSuccessful()? new ResponseEntity<>(domainToDTOConverter.convert(result), HttpStatus.OK) :
@@ -63,9 +66,10 @@ public class CartEntrypoint {
 
     @Operation(summary = "Get cart by id", description = "Get cart by id")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200")
+            @ApiResponse(responseCode = "200",content = @Content(
+                    schema = @Schema(implementation = CartRS.class)))
     })
-    @GetMapping("/{id}")
+    @GetMapping(BY_ID)
     public ResponseEntity<?> getCartById(@PathVariable UUID id) {
         GetCartByIdUseCaseParams params = GetCartByIdUseCaseParams.builder()
                 .cartId(id)
@@ -79,9 +83,10 @@ public class CartEntrypoint {
 
     @Operation(summary = "Add cart", description = "Add cart")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200")
+            @ApiResponse(responseCode = "200",content = @Content(
+                    schema = @Schema(implementation = AddCartUseCaseResult.class)))
     })
-    @PostMapping("/")
+    @PostMapping
     public ResponseEntity<?> addCart() {
         AddCartUseCaseResult result =addCartUseCase.execute();
         return result.wasSuccessful()? new ResponseEntity<>(result, HttpStatus.OK) :
@@ -90,9 +95,10 @@ public class CartEntrypoint {
 
     @Operation(summary = "Delete cart", description = "Delete cart")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200")
+            @ApiResponse(responseCode = "200",content = @Content(
+                    schema = @Schema(implementation = DeleteCartUseCaseResult.class)))
     })
-    @DeleteMapping("/{id}")
+    @DeleteMapping(BY_ID)
     public ResponseEntity<?> deleteCart(@PathVariable UUID id) {
         DeleteCartUseCaseParams params = DeleteCartUseCaseParams.builder()
                 .cartId(id)
@@ -105,7 +111,12 @@ public class CartEntrypoint {
 
     }
 
-    @PostMapping("/{id}/products")
+    @Operation(summary = "Add product to cart", description = "Add product to cart")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200",content = @Content(
+                    schema = @Schema(implementation = CartRS.class)))
+    })
+    @PostMapping(ADD_PRODUCT)
     public ResponseEntity<?> addProductToCart(@PathVariable UUID id, @RequestBody @Valid AddProductToCartDTO addProductToCartDTO) {
         AddProductToCartUseCaseParams params = AddProductToCartUseCaseParams.builder()
                 .cartId(id)
