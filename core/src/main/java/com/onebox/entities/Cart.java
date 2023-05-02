@@ -15,6 +15,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -37,6 +38,9 @@ public class Cart {
     private Double total;
 
     @Column
-    private Long validUntil;
+    private Date createdAt;
+
+    @Column
+    private Date updatedAt;
 
 }

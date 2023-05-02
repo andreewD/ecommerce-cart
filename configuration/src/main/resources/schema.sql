@@ -18,6 +18,7 @@ CREATE TABLE CART (
   id UUID PRIMARY KEY,
   products VARCHAR(250),
   total DECIMAL(10,2),
-  valid_until INTEGER
+  created_at TIMESTAMP,
+  updated_at TIMESTAMP
 );
 

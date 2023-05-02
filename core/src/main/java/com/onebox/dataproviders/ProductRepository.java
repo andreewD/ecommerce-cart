@@ -8,5 +8,6 @@ public interface ProductRepository {
 
     List<Product> findAll();
     Product findById(Integer id);
-    void updateStock(Long id, Integer stock);
+    void updateStock(Integer id, Integer stock);
+    Product create(Product product);
 }

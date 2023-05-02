@@ -3,21 +3,26 @@ package com.onebox.repository.cart;
 import com.onebox.dataproviders.CartRepository;
 import com.onebox.entities.Cart;
 import com.onebox.entities.CartItem;
-import com.onebox.entities.Product;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContextType;
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 @Repository
 @Transactional
+@Slf4j
 public class CartDaoImpl extends Cart implements CartRepository {
+    @Value("${cart.inactive.time}")
+    private Long cartInactiveTime;
 
     @PersistenceContext(type = PersistenceContextType.TRANSACTION)
     private EntityManager entityManager;
@@ -32,6 +37,8 @@ public class CartDaoImpl extends Cart implements CartRepository {
         Cart cart = new Cart();
         cart.setProducts("");
         cart.setTotal(0.0);
+        cart.setCreatedAt(new Date());
+        cart.setUpdatedAt(new Date());
         entityManager.persist(cart);
         return cart.getId();
     }
@@ -43,7 +50,7 @@ public class CartDaoImpl extends Cart implements CartRepository {
 
     @Override
     public void deleteCart(UUID id) {
-        Cart cart = entityManager.find(Cart.class, id);
+        Cart cart = findById(id);
         entityManager.remove(cart);
     }
 
@@ -90,5 +97,20 @@ public class CartDaoImpl extends Cart implements CartRepository {
         entityManager.merge(cart);
     }
 
+    @Override
+    public List<Cart> findInactiveCarts() {
+        Long currentTime = System.currentTimeMillis();
+        Long inactivityTime = currentTime - (1 * 60 * 1000);
+        return entityManager.createQuery("SELECT c FROM Cart c WHERE c.updatedAt < :inactivityTime", Cart.class)
+                .setParameter("inactivityTime", new Date(inactivityTime))
+                .getResultList();
+    }
+
+    @Override
+    public void deleteAll(List<Cart> inactiveCarts) {
+        for (Cart cart : inactiveCarts) {
+            entityManager.remove(cart);
+        }
+    }
 
 }

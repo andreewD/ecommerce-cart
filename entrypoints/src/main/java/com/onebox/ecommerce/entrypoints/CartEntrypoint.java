@@ -1,7 +1,7 @@
 package com.onebox.ecommerce.entrypoints;
 
 import com.onebox.ecommerce.entrypoints.converter.DomainToDTOConverter;
-import com.onebox.ecommerce.entrypoints.request.AddProductToCartRQ;
+import com.onebox.ecommerce.entrypoints.request.AddProductToCartDTO;
 import com.onebox.ecommerce.entrypoints.response.ListCartsRS;
 import com.onebox.usecases.cart.AddCartUseCaseImpl;
 import com.onebox.usecases.cart.AddCartUseCaseResult;
@@ -18,7 +18,6 @@ import com.onebox.usecases.cart.ListCartsUseCaseImpl;
 import com.onebox.usecases.cart.ListCartsUseCaseResult;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -111,11 +110,11 @@ public class CartEntrypoint {
     }
 
     @PostMapping("/{id}/products")
-    public ResponseEntity<?> addProductToCart(@PathVariable UUID id, @RequestBody @Valid AddProductToCartRQ addProductToCartRQ) {
+    public ResponseEntity<?> addProductToCart(@PathVariable UUID id, @RequestBody @Valid AddProductToCartDTO addProductToCartDTO) {
         AddProductToCartUseCaseParams params = AddProductToCartUseCaseParams.builder()
                 .cartId(id)
-                .productId(addProductToCartRQ.getProductId())
-                .quantity(addProductToCartRQ.getQuantity())
+                .productId(addProductToCartDTO.getProductId())
+                .quantity(addProductToCartDTO.getQuantity())
                 .build();
 
         AddProductToCartUseCaseResult result = addProductToCartUseCase.execute(params);

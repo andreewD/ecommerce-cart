@@ -2,6 +2,7 @@ package com.onebox.configuration;
 
 import com.onebox.dataproviders.CartRepository;
 import com.onebox.dataproviders.ProductRepository;
+import com.onebox.ecommerce.entrypoints.converter.DTOToDomainConverter;
 import com.onebox.ecommerce.entrypoints.converter.DomainToDTOConverter;
 import com.onebox.repository.cart.CartDaoImpl;
 import com.onebox.repository.product.ProductDaoImpl;
@@ -25,4 +26,10 @@ public class RepositoryConfiguration {
     public DomainToDTOConverter domainToDTOConverter() {
         return new DomainToDTOConverter();
     }
+
+    @Bean
+    public DTOToDomainConverter dtoToDomainConverter() {
+        return new DTOToDomainConverter();
+    }
+
 }

@@ -24,10 +24,16 @@ public class ProductDaoImpl extends Product implements ProductRepository {
     }
 
     @Override
-    public void updateStock(Long id, Integer stock) {
+    public void updateStock(Integer id, Integer stock) {
         Product product = entityManager.find(Product.class, id);
         product.setStock(stock);
         entityManager.merge(product);
+    }
+
+    @Override
+    public Product create(Product product) {
+        entityManager.persist(product);
+        return product;
     }
 
 }

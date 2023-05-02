@@ -11,6 +11,6 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ListCartsRS extends BaseRS{
+public class ListCartsRS{
     private List<CartRS> carts;
 }
