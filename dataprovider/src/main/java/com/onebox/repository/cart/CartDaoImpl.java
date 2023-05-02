@@ -12,10 +12,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Repository
 @Transactional
@@ -58,19 +60,14 @@ public class CartDaoImpl extends Cart implements CartRepository {
     public void addProductToCart(UUID cartId, Integer productId, Integer quantity, Double price) {
         Cart cart = entityManager.find(Cart.class, cartId);
 
-        //Convert products string to List of CartItem
-        List<CartItem> products = new ArrayList<>();
-        if (cart.getProducts() != null && !cart.getProducts().isEmpty()) {
-            String[] productsData = cart.getProducts().split(",");
-            for (String productData : productsData) {
-                String[] productDataArray = productData.split(":");
-                CartItem item = new CartItem();
-                item.setProductId(Integer.parseInt(productDataArray[0]));
-                item.setQuantity(Integer.parseInt(productDataArray[1]));
-                item.setPrice(Double.parseDouble(productDataArray[2]));
-                products.add(item);
-            }
-        }
+        List<CartItem> products = Arrays.asList(cart.getProducts().split(",")).stream().map(productData -> {
+            String[] productDataArray = productData.split(":");
+            return CartItem.builder()
+                    .productId(Integer.parseInt(productDataArray[0]))
+                    .quantity(Integer.parseInt(productDataArray[1]))
+                    .price(Double.parseDouble(productDataArray[2]))
+                    .build();
+        }).collect(Collectors.toList());
 
         // Check if product is already in cart
         Optional<CartItem> itemOptional = products.stream().filter(item -> item.getProductId().equals(productId)).findFirst();
