@@ -13,7 +13,7 @@ Author: [Andree Anchi](https://www.linkedin.com/in/andree-anchi-dueñas/)
 ## How to run
 - Clone this repository
 - Run `mvn clean install` to build the project
-- Run `mvn spring-boot:run` to run the project
+- Run `mvn spring-boot:run -pl configuration` to run the project
 - The application will be available at `http://localhost:8080/v1`
 - The H2 database will be available at `http://localhost:8080/v1/h2-console`
     - JDBC URL: `jdbc:h2:mem:testdb`
