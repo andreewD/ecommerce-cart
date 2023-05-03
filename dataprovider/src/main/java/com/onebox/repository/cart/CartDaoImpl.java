@@ -87,7 +87,7 @@ public class CartDaoImpl extends Cart implements CartRepository {
     @Override
     public List<Cart> findInactiveCarts() {
         Long currentTime = System.currentTimeMillis();
-        Long inactivityTime = currentTime - (cartInactiveTime);
+        long inactivityTime = currentTime - (cartInactiveTime);
         return entityManager.createQuery("SELECT c FROM Cart c WHERE c.updatedAt < :inactivityTime", Cart.class)
                 .setParameter("inactivityTime", new Date(inactivityTime))
                 .getResultList();
@@ -133,16 +133,14 @@ public class CartDaoImpl extends Cart implements CartRepository {
         // Check if cart quantity is higher or equal than the product than we want to delete
         if (itemOptional.isPresent()) {
             CartItem item = itemOptional.get();
-            if (item.getQuantity() >= quantity) {
-                return true;
-            }
+            return item.getQuantity() >= quantity;
         }
 
         return false;
     }
 
     private Double deleteCartItem(List<CartItem> products,CartItem item, Integer quantity, Double productPrice) {
-        Double priceDifference=0.0;
+        Double priceDifference;
 
         item.setQuantity(item.getQuantity() - quantity);
         priceDifference =  (productPrice * quantity);
@@ -162,7 +160,7 @@ public class CartDaoImpl extends Cart implements CartRepository {
         Cart cart = entityManager.find(Cart.class, cartId);
         Product product = entityManager.find(Product.class, productId);
 
-        Double priceDifference = 0.0;
+        double priceDifference = 0.0;
         List<CartItem> products = buildCartItems(cart.getProducts());
 
         // Check if product is already in cart
