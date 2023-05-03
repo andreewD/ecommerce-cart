@@ -3,7 +3,7 @@ package com.onebox.repository.cart;
 import com.onebox.dataproviders.CartRepository;
 import com.onebox.entities.Cart;
 import com.onebox.entities.CartItem;
-
+import com.onebox.entities.Product;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
@@ -61,17 +61,11 @@ public class CartDaoImpl extends Cart implements CartRepository {
     public void addProductToCart(UUID cartId, Integer productId, Integer quantity, Double price) {
         Cart cart = entityManager.find(Cart.class, cartId);
 
-        List<CartItem> products = Arrays.asList(cart.getProducts().split(",")).stream().map(productData -> {
-            String[] productDataArray = productData.split(":");
-            return CartItem.builder()
-                    .productId(Integer.parseInt(productDataArray[0]))
-                    .quantity(Integer.parseInt(productDataArray[1]))
-                    .price(Double.parseDouble(productDataArray[2]))
-                    .build();
-        }).collect(Collectors.toList());
+        List<CartItem> products = buildCartItems(cart.getProducts());
 
         // Check if product is already in cart
-        Optional<CartItem> itemOptional = products.stream().filter(item -> item.getProductId().equals(productId)).findFirst();
+        Optional<CartItem> itemOptional = products.stream()
+                .filter(item -> item.getProductId().equals(productId)).findFirst();
 
         if (itemOptional.isPresent()) {
             CartItem item = itemOptional.get();
@@ -84,21 +78,16 @@ public class CartDaoImpl extends Cart implements CartRepository {
             products.add(item);
         }
 
-        //Convert List of CartItem to products string
-        List<String> productsString = new ArrayList<>();
-        for (CartItem product : products) {
-            productsString.add(product.getProductId() + ":" + product.getQuantity() + ":" + product.getPrice());
-        }
-
-        cart.setProducts(String.join(",", productsString));
+        cart.setProducts(buildProductsString(products));
         cart.setTotal(cart.getTotal() + (price));
+        cart.setUpdatedAt(new Date());
         entityManager.merge(cart);
     }
 
     @Override
     public List<Cart> findInactiveCarts() {
         Long currentTime = System.currentTimeMillis();
-        Long inactivityTime = currentTime - (1 * 60 * 1000);
+        Long inactivityTime = currentTime - (cartInactiveTime);
         return entityManager.createQuery("SELECT c FROM Cart c WHERE c.updatedAt < :inactivityTime", Cart.class)
                 .setParameter("inactivityTime", new Date(inactivityTime))
                 .getResultList();
@@ -109,6 +98,86 @@ public class CartDaoImpl extends Cart implements CartRepository {
         for (Cart cart : inactiveCarts) {
             entityManager.remove(cart);
         }
+    }
+
+    private List<CartItem> buildCartItems(String products) {
+        List<CartItem> cartItems = new ArrayList<>();
+        if (products != null && !products.isEmpty()) {
+            List<String> productsString = Arrays.asList(products.split(","));
+            cartItems = productsString.stream().map(product -> {
+                List<String> productString = Arrays.asList(product.split(":"));
+                return new CartItem(Integer.parseInt(productString.get(0)), Integer.parseInt(productString.get(1)), Double.parseDouble(productString.get(2)));
+            }).collect(Collectors.toList());
+        }
+        return cartItems;
+    }
+
+    private String buildProductsString(List<CartItem> products) {
+        List<String> productsString = new ArrayList<>();
+        for (CartItem product : products) {
+            productsString.add(product.getProductId() + ":" + product.getQuantity() + ":" + product.getPrice());
+        }
+        return String.join(",", productsString);
+    }
+
+    @Override
+    public boolean isProductInCart(UUID cartId, Integer productId, Integer quantity) {
+        Cart cart = entityManager.find(Cart.class, cartId);
+
+        List<CartItem> products = buildCartItems(cart.getProducts());
+
+        // Check if product is already in cart
+        Optional<CartItem> itemOptional = products.stream()
+                .filter(item -> item.getProductId().equals(productId)).findFirst();
+
+        // Check if cart quantity is higher or equal than the product than we want to delete
+        if (itemOptional.isPresent()) {
+            CartItem item = itemOptional.get();
+            if (item.getQuantity() >= quantity) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private Double deleteCartItem(List<CartItem> products,CartItem item, Integer quantity, Double productPrice) {
+        Double priceDifference=0.0;
+
+        item.setQuantity(item.getQuantity() - quantity);
+        priceDifference =  (productPrice * quantity);
+        item.setPrice(item.getPrice() - priceDifference);
+
+        if(item.getQuantity() == 0) {
+            products.remove(item);
+            return priceDifference;
+        }
+
+        products.set(products.indexOf(item), item);
+        return priceDifference;
+    }
+
+    @Override
+    public void deleteProductFromCart(UUID cartId, Integer productId, Integer quantity) {
+        Cart cart = entityManager.find(Cart.class, cartId);
+        Product product = entityManager.find(Product.class, productId);
+
+        Double priceDifference = 0.0;
+        List<CartItem> products = buildCartItems(cart.getProducts());
+
+        // Check if product is already in cart
+        Optional<CartItem> itemOptional = products.stream()
+                .filter(item -> item.getProductId().equals(productId)).findFirst();
+
+        if (itemOptional.isPresent()) {
+            CartItem item = itemOptional.get();
+            priceDifference = deleteCartItem(products,item,quantity,product.getPrice());
+        }
+
+        cart.setProducts(buildProductsString(products));
+        cart.setTotal(cart.getTotal() - (priceDifference));
+        cart.setUpdatedAt(new Date());
+        entityManager.merge(cart);
     }
 
 }

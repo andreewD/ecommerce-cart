@@ -28,6 +28,7 @@ Author: [Andree Anchi](https://www.linkedin.com/in/andree-anchi-dueñas/)
 
 ### Products
 - `GET /product` - Get all products
+- `POST /product` - Create a new product
 
 ### Carts
 - `GET /cart` - Get all carts
@@ -35,5 +36,4 @@ Author: [Andree Anchi](https://www.linkedin.com/in/andree-anchi-dueñas/)
 - `POST /cart` - Create a new cart
 - `DELETE /cart/{id}` - Delete cart by id
 - `POST /cart/{id}/products` - Add product to cart
-- `DELETE /cart/{id}/products/{productId}` - Remove product from cart [TODO]
-- `PUT /cart/{id}/products/{productId}` - Update product quantity in cart [TODO]
+- `DELETE /cart/{id}/products` - Remove product from cart

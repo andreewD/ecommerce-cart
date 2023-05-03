@@ -1,17 +1,20 @@
-package com.onebox.ecommerce.entrypoints.request;
+package com.onebox.usecases.cart;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.Positive;
+import java.util.UUID;
 
-@Data
 @Builder
+@Data
+@EqualsAndHashCode(callSuper = false)
 @AllArgsConstructor
 @NoArgsConstructor
-public class AddProductToCartDTO {
+public class DeleteProductFromCartUseCaseParams {
+    private UUID cartId;
     private Integer productId;
     private Integer quantity;
 }

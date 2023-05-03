@@ -15,4 +15,6 @@ public interface CartRepository {
     void addProductToCart(UUID cartId, Integer productId, Integer quantity,Double price);
     List<Cart> findInactiveCarts();
     void deleteAll(List<Cart> inactiveCarts);
+    boolean isProductInCart(UUID cartId, Integer productId, Integer quantity);
+    void deleteProductFromCart(UUID cartId, Integer productId, Integer quantity);
 }

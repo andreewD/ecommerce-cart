@@ -5,6 +5,7 @@ import com.onebox.dataproviders.ProductRepository;
 import com.onebox.usecases.cart.AddCartUseCaseImpl;
 import com.onebox.usecases.cart.AddProductToCartUseCaseImpl;
 import com.onebox.usecases.cart.DeleteCartUseCaseImpl;
+import com.onebox.usecases.cart.DeleteProductFromCartUseCaseImpl;
 import com.onebox.usecases.cart.GetCartByIdUseCaseImpl;
 import com.onebox.usecases.cart.ListCartsUseCaseImpl;
 import com.onebox.usecases.product.AddProductUseCaseImpl;
@@ -47,6 +48,11 @@ public class UseCaseConfiguration {
     @Bean
     public AddProductUseCaseImpl addProductUseCase(ProductRepository productRepository) {
         return new AddProductUseCaseImpl(productRepository);
+    }
+
+    @Bean
+    public DeleteProductFromCartUseCaseImpl deleteProductFromCartUseCase(CartRepository cartRepository, ProductRepository productRepository) {
+        return new DeleteProductFromCartUseCaseImpl(cartRepository, productRepository);
     }
 
 }

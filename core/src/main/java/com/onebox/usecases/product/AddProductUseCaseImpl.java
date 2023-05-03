@@ -14,6 +14,17 @@ public class AddProductUseCaseImpl implements AddProductUseCase{
     @Override
     public AddProductUseCaseResult execute(AddProductUseCaseParams params) {
         AddProductUseCaseResult result = AddProductUseCaseResult.builder().build();
+
+        if(params.getProduct().getStock()<=0) {
+            result.setStatusCode(StatusCode.INVALID_QUANTITY);
+            return result;
+        }
+
+        if(params.getProduct().getPrice()<=0) {
+            result.setStatusCode(StatusCode.INVALID_PRICE);
+            return result;
+        }
+
         Product product = params.getProduct();
         productRepository.create(product);
         result.setProduct(product);

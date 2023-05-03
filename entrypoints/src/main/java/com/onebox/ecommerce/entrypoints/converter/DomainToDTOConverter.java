@@ -8,12 +8,14 @@ import com.onebox.ecommerce.entrypoints.response.product.ProductRS;
 import com.onebox.entities.Cart;
 import com.onebox.entities.Product;
 import com.onebox.usecases.cart.AddProductToCartUseCaseResult;
+import com.onebox.usecases.cart.DeleteProductFromCartUseCaseResult;
 import com.onebox.usecases.cart.ListCartsUseCaseResult;
 import com.onebox.usecases.product.AddProductUseCaseResult;
 import com.onebox.usecases.product.ListProductsUseCaseResult;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class DomainToDTOConverter {
     public List<CartItemRS> convert(String cartProducts) {
@@ -45,38 +47,38 @@ public class DomainToDTOConverter {
     }
 
     public ListCartsRS convert(ListCartsUseCaseResult result){
-        List<CartRS> carts = new ArrayList<>();
-        for (Cart cart : result.getCarts()) {
-            carts.add(convert(cart));
-        }
+        List<CartRS> carts = result.getCarts()
+                .stream()
+                .map(this::convert)
+                .collect(Collectors.toList());
 
-        ListCartsRS listCartsRS = new ListCartsRS();
-        listCartsRS.setCarts(carts);
-        return listCartsRS;
+        return ListCartsRS.builder().carts(carts).build();
     }
 
     public ProductRS convert(Product product){
-        ProductRS productRS = new ProductRS();
-        productRS.setId(product.getProduct_seq());
-        productRS.setName(product.getName());
-        productRS.setDescription(product.getDescription());
-        productRS.setPrice(product.getPrice());
-        productRS.setStock(product.getStock());
-        return productRS;
+        return ProductRS.builder()
+                .id(product.getProduct_seq())
+                .name(product.getName())
+                .description(product.getDescription())
+                .price(product.getPrice())
+                .stock(product.getStock())
+                .build();
     }
     public ProductRS convert(AddProductUseCaseResult result){
         return convert(result.getProduct());
     }
 
-    public ListProductsRS convert(ListProductsUseCaseResult result){
-        List<ProductRS> products = new ArrayList<>();
-        for (Product product : result.getProducts()) {
-            products.add(convert(product));
-        }
+    public CartRS convert(DeleteProductFromCartUseCaseResult result) {
+        return convert(result.getCart());
+    }
 
-        ListProductsRS listProductsRS = new ListProductsRS();
-        listProductsRS.setProducts(products);
-        return listProductsRS;
+    public ListProductsRS convert(ListProductsUseCaseResult result){
+        List<ProductRS> products = result.getProducts()
+                .stream()
+                .map(this::convert)
+                .collect(Collectors.toList());
+
+        return ListProductsRS.builder().products(products).build();
     }
 
 }

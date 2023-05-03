@@ -19,7 +19,18 @@ public class AddProductToCartUseCaseImpl implements AddProductToCartUseCase{
     @Override
     public AddProductToCartUseCaseResult execute(AddProductToCartUseCaseParams params) {
         AddProductToCartUseCaseResult result = AddProductToCartUseCaseResult.builder().build();
+
+        if(params.getQuantity()<=0) {
+            result.setStatusCode(StatusCode.INVALID_QUANTITY);
+            return result;
+        }
+
         Product product = productRepository.findById(params.getProductId());
+
+        if(params.getQuantity()<=0) {
+            result.setStatusCode(StatusCode.INVALID_QUANTITY);
+            return result;
+        }
 
         if (Objects.isNull(product)) {
             result.setStatusCode(StatusCode.PRODUCT_NOT_FOUND);

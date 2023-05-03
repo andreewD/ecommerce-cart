@@ -5,13 +5,11 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.Positive;
-
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class AddProductToCartDTO {
+public class DeleteProductToCartDTO {
     private Integer productId;
     private Integer quantity;
 }

@@ -2,6 +2,7 @@ package com.onebox.ecommerce.entrypoints;
 
 import com.onebox.ecommerce.entrypoints.converter.DomainToDTOConverter;
 import com.onebox.ecommerce.entrypoints.request.AddProductToCartDTO;
+import com.onebox.ecommerce.entrypoints.request.DeleteProductToCartDTO;
 import com.onebox.ecommerce.entrypoints.response.CartRS;
 import com.onebox.ecommerce.entrypoints.response.ListCartsRS;
 import com.onebox.usecases.cart.AddCartUseCaseImpl;
@@ -12,6 +13,9 @@ import com.onebox.usecases.cart.AddProductToCartUseCaseResult;
 import com.onebox.usecases.cart.DeleteCartUseCaseImpl;
 import com.onebox.usecases.cart.DeleteCartUseCaseParams;
 import com.onebox.usecases.cart.DeleteCartUseCaseResult;
+import com.onebox.usecases.cart.DeleteProductFromCartUseCaseImpl;
+import com.onebox.usecases.cart.DeleteProductFromCartUseCaseParams;
+import com.onebox.usecases.cart.DeleteProductFromCartUseCaseResult;
 import com.onebox.usecases.cart.GetCartByIdUseCaseImpl;
 import com.onebox.usecases.cart.GetCartByIdUseCaseParams;
 import com.onebox.usecases.cart.GetCartByIdUseCaseResult;
@@ -33,13 +37,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-
 import javax.validation.Valid;
 import java.util.UUID;
 
-import static com.onebox.ecommerce.entrypoints.CartApi.ADD_PRODUCT;
 import static com.onebox.ecommerce.entrypoints.CartApi.BASE;
 import static com.onebox.ecommerce.entrypoints.CartApi.BY_ID;
+import static com.onebox.ecommerce.entrypoints.CartApi.PRODUCT;
 
 @RestController
 @AllArgsConstructor
@@ -51,6 +54,7 @@ public class CartEntrypoint {
     private final DeleteCartUseCaseImpl deleteCartUseCase;
     private final AddProductToCartUseCaseImpl addProductToCartUseCase;
     private final DomainToDTOConverter domainToDTOConverter;
+    private final DeleteProductFromCartUseCaseImpl deleteProductFromCartUseCase;
 
     @Operation(summary = "List carts", description = "List carts")
     @ApiResponses(value = {
@@ -116,7 +120,7 @@ public class CartEntrypoint {
             @ApiResponse(responseCode = "200",content = @Content(
                     schema = @Schema(implementation = CartRS.class)))
     })
-    @PostMapping(ADD_PRODUCT)
+    @PostMapping(PRODUCT)
     public ResponseEntity<?> addProductToCart(@PathVariable UUID id, @RequestBody @Valid AddProductToCartDTO addProductToCartDTO) {
         AddProductToCartUseCaseParams params = AddProductToCartUseCaseParams.builder()
                 .cartId(id)
@@ -125,6 +129,25 @@ public class CartEntrypoint {
                 .build();
 
         AddProductToCartUseCaseResult result = addProductToCartUseCase.execute(params);
+
+        return result.wasSuccessful()? new ResponseEntity<>(domainToDTOConverter.convert(result), HttpStatus.OK) :
+                new ResponseEntity<>(result, HttpStatus.CONFLICT);
+    }
+
+    @Operation(summary = "Delete product from cart", description = "Delete product from cart")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200",content = @Content(
+                    schema = @Schema(implementation = CartRS.class)))
+    })
+    @DeleteMapping(PRODUCT)
+    public ResponseEntity<?> deleteProductFromCart(@PathVariable UUID id, @RequestBody @Valid DeleteProductToCartDTO deleteProductToCartDTO) {
+        DeleteProductFromCartUseCaseParams params = DeleteProductFromCartUseCaseParams.builder()
+                .cartId(id)
+                .productId(deleteProductToCartDTO.getProductId())
+                .quantity(deleteProductToCartDTO.getQuantity())
+                .build();
+
+        DeleteProductFromCartUseCaseResult result = deleteProductFromCartUseCase.execute(params);
 
         return result.wasSuccessful()? new ResponseEntity<>(domainToDTOConverter.convert(result), HttpStatus.OK) :
                 new ResponseEntity<>(result, HttpStatus.CONFLICT);
